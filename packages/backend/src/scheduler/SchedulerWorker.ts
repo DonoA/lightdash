@@ -771,32 +771,67 @@ export class SchedulerWorker extends SchedulerTask {
                 payload,
                 helpers,
             ) => {
-                await SchedulerClient.processJob(
-                    SCHEDULER_TASKS.CREATE_PROJECT_WITH_COMPILE,
-                    helpers.job.id,
-                    helpers.job.run_at,
-                    payload,
-                    async () => {
-                        await this.createProjectWithCompile(
-                            helpers.job.id,
-                            helpers.job.run_at,
-                            payload,
-                        );
+                await tryJobOrTimeout(
+                    SchedulerClient.processJob(
+                        SCHEDULER_TASKS.CREATE_PROJECT_WITH_COMPILE,
+                        helpers.job.id,
+                        helpers.job.run_at,
+                        payload,
+                        async () => {
+                            await this.createProjectWithCompile(
+                                helpers.job.id,
+                                helpers.job.run_at,
+                                payload,
+                            );
+                        },
+                    ),
+                    helpers.job,
+                    this.lightdashConfig.scheduler.jobTimeout,
+                    async (job, e) => {
+                        await this.schedulerService.logSchedulerJob({
+                            task: SCHEDULER_TASKS.CREATE_PROJECT_WITH_COMPILE,
+                            jobId: job.id,
+                            scheduledTime: job.run_at,
+                            status: SchedulerJobStatus.ERROR,
+                            details: {
+                                createdByUserUuid: payload.createdByUserUuid,
+                                error: getErrorMessage(e),
+                                organizationUuid: payload.organizationUuid,
+                            },
+                        });
                     },
                 );
             },
             [SCHEDULER_TASKS.COMPILE_PROJECT]: async (payload, helpers) => {
-                await SchedulerClient.processJob(
-                    SCHEDULER_TASKS.COMPILE_PROJECT,
-                    helpers.job.id,
-                    helpers.job.run_at,
-                    payload,
-                    async () => {
-                        await this.compileProject(
-                            helpers.job.id,
-                            helpers.job.run_at,
-                            payload,
-                        );
+                await tryJobOrTimeout(
+                    SchedulerClient.processJob(
+                        SCHEDULER_TASKS.COMPILE_PROJECT,
+                        helpers.job.id,
+                        helpers.job.run_at,
+                        payload,
+                        async () => {
+                            await this.compileProject(
+                                helpers.job.id,
+                                helpers.job.run_at,
+                                payload,
+                            );
+                        },
+                    ),
+                    helpers.job,
+                    this.lightdashConfig.scheduler.jobTimeout,
+                    async (job, e) => {
+                        await this.schedulerService.logSchedulerJob({
+                            task: SCHEDULER_TASKS.COMPILE_PROJECT,
+                            jobId: job.id,
+                            scheduledTime: job.run_at,
+                            status: SchedulerJobStatus.ERROR,
+                            details: {
+                                createdByUserUuid: payload.createdByUserUuid,
+                                error: getErrorMessage(e),
+                                projectUuid: payload.projectUuid,
+                                organizationUuid: payload.organizationUuid,
+                            },
+                        });
                     },
                 );
             },
@@ -843,32 +878,67 @@ export class SchedulerWorker extends SchedulerTask {
                 payload,
                 helpers,
             ) => {
-                await SchedulerClient.processJob(
-                    SCHEDULER_TASKS.TEST_AND_COMPILE_PROJECT,
-                    helpers.job.id,
-                    helpers.job.run_at,
-                    payload,
-                    async () => {
-                        await this.testAndCompileProject(
-                            helpers.job.id,
-                            helpers.job.run_at,
-                            payload,
-                        );
+                await tryJobOrTimeout(
+                    SchedulerClient.processJob(
+                        SCHEDULER_TASKS.TEST_AND_COMPILE_PROJECT,
+                        helpers.job.id,
+                        helpers.job.run_at,
+                        payload,
+                        async () => {
+                            await this.testAndCompileProject(
+                                helpers.job.id,
+                                helpers.job.run_at,
+                                payload,
+                            );
+                        },
+                    ),
+                    helpers.job,
+                    this.lightdashConfig.scheduler.jobTimeout,
+                    async (job, e) => {
+                        await this.schedulerService.logSchedulerJob({
+                            task: SCHEDULER_TASKS.TEST_AND_COMPILE_PROJECT,
+                            jobId: job.id,
+                            scheduledTime: job.run_at,
+                            status: SchedulerJobStatus.ERROR,
+                            details: {
+                                createdByUserUuid: payload.createdByUserUuid,
+                                error: getErrorMessage(e),
+                                projectUuid: payload.projectUuid,
+                                organizationUuid: payload.organizationUuid,
+                            },
+                        });
                     },
                 );
             },
             [SCHEDULER_TASKS.VALIDATE_PROJECT]: async (payload, helpers) => {
-                await SchedulerClient.processJob(
-                    SCHEDULER_TASKS.VALIDATE_PROJECT,
-                    helpers.job.id,
-                    helpers.job.run_at,
-                    payload,
-                    async () => {
-                        await this.validateProject(
-                            helpers.job.id,
-                            helpers.job.run_at,
-                            payload,
-                        );
+                await tryJobOrTimeout(
+                    SchedulerClient.processJob(
+                        SCHEDULER_TASKS.VALIDATE_PROJECT,
+                        helpers.job.id,
+                        helpers.job.run_at,
+                        payload,
+                        async () => {
+                            await this.validateProject(
+                                helpers.job.id,
+                                helpers.job.run_at,
+                                payload,
+                            );
+                        },
+                    ),
+                    helpers.job,
+                    this.lightdashConfig.scheduler.jobTimeout,
+                    async (job, e) => {
+                        await this.schedulerService.logSchedulerJob({
+                            task: SCHEDULER_TASKS.VALIDATE_PROJECT,
+                            jobId: job.id,
+                            scheduledTime: job.run_at,
+                            status: SchedulerJobStatus.ERROR,
+                            details: {
+                                error: getErrorMessage(e),
+                                projectUuid: payload.projectUuid,
+                                organizationUuid: payload.organizationUuid,
+                            },
+                        });
                     },
                 );
             },
